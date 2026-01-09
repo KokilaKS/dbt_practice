@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: sf_raw
+    database: DBT_SFDB
+    schema: DBT_SFSCHEMA
+    tables:
+      - name: Customer
+      - name: Orders
