@@ -54,6 +54,17 @@ jobs:
       - name: Clean dbt
         run: dbt clean --profiles-dir ~/.dbt
 
+      - name: Remove old dbt state
+        run: |
+          rm -rf target
+          rm -rf dbt_packages
+          rm -rf logs
+
+      - name: Debug dbt source resolution
+        run: |
+          dbt ls --resource-type source --profiles-dir ~/.dbt --project-dir .
+
+
       - name: Run dbt build (DEV)
         env:
           DBT_USER: ${{ secrets.DBT_USER }}
