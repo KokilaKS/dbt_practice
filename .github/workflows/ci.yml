@@ -11,22 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - uses: actions/checkout@v4
 
+      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
+      # 3. Install dbt
       - name: Install dbt
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install dbt-snowflake
 
+      # 4. Hard reset any cached dbt state (VERY IMPORTANT)
       - name: Hard reset dbt state
         run: |
           rm -rf target dbt_packages logs ~/.dbt
 
+      # 5. Create dbt profile
       - name: Create dbt profile
         env:
           DBT_USER: ${{ secrets.DBT_USER }}
@@ -50,17 +55,27 @@ jobs:
                 threads: 4
           EOF
 
+      # 6. Verify repo contents (helps debug if something is missing)
+      - name: Verify models directory
+        run: |
+          echo "=== models directory ==="
+          ls -R models
+
+      # 7. Install dbt dependencies
       - name: Install dbt deps
         run: |
           dbt deps --profiles-dir ~/.dbt --profile my_new_project
 
+      # 8. Debug source resolution (optional but helpful)
       - name: Debug dbt sources
         run: |
-          dbt ls --resource-type source \
+          dbt ls \
+            --resource-type source \
             --profiles-dir ~/.dbt \
             --project-dir . \
             --profile my_new_project
 
+      # 9. Run dbt build
       - name: Run dbt build (DEV)
         run: |
           dbt build \
