@@ -16,23 +16,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install dbt
         run: |
           pip install --upgrade pip
           pip install dbt-snowflake
 
-      - name: Debug secrets
-        env:
-          DBT_USER: ${{ secrets.DBT_USER }}
-          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
-          DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
-        run: |
-          echo "DBT_USER=${DBT_USER}"
-          echo "DBT_ACCOUNT=${DBT_ACCOUNT}"
-          echo "DBT_PASSWORD is set? ${#DBT_PASSWORD}"
-
+      # -------------------------------
+      # Create dbt profile dynamically
+      # -------------------------------
       - name: Create dbt profile
         env:
           DBT_USER: ${{ secrets.DBT_USER }}
@@ -40,47 +33,47 @@ jobs:
           DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
         run: |
           mkdir -p ~/.dbt
-          cat <<EOF > ~/.dbt/profiles.yml
+          cat > ~/.dbt/profiles.yml <<EOF
           my_new_project:
             target: dev
             outputs:
               dev:
                 type: snowflake
-                account: $DBT_ACCOUNT
-                user: $DBT_USER
-                password: $DBT_PASSWORD
+                account: ${DBT_ACCOUNT}
+                user: ${DBT_USER}
+                password: ${DBT_PASSWORD}
                 role: ACCOUNTADMIN
-                database: dbt_sfdb
+                database: DBT_SFDB
                 warehouse: COMPUTE_WH
                 schema: ANALYTICS_DEV
                 threads: 4
           EOF
 
-      - name: Clean dbt
+      # -------------------------------
+      # Hard clean all dbt state
+      # -------------------------------
+      - name: Hard clean dbt state
         run: |
           dbt clean --profiles-dir ~/.dbt || true
-
-      - name: Remove old dbt state
-        run: |
           rm -rf target dbt_packages logs
 
-      - name: Debug dbt source resolution
+      # -------------------------------
+      # Debug sources resolution
+      # -------------------------------
+      - name: Debug dbt sources
         run: |
-          dbt ls \
-            --resource-type source \
-            --profiles-dir ~/.dbt \
-            --project-dir . \
-            --profile my_new_project \
-            --target dev
+          dbt ls --resource-type source --profiles-dir ~/.dbt --project-dir .
 
-      - name: Run dbt build (DEV)
-        env:
-          DBT_USER: ${{ secrets.DBT_USER }}
-          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
-          DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
+      # -------------------------------
+      # Install packages
+      # -------------------------------
+      - name: Install dbt deps
         run: |
-          dbt deps
-          dbt build \
-            --profiles-dir ~/.dbt \
-            --profile my_new_project \
-            --target dev
+          dbt deps --profiles-dir ~/.dbt
+
+      # -------------------------------
+      # Run build
+      # -------------------------------
+      - name: Run dbt build (DEV)
+        run: |
+          dbt build --profiles-dir ~/.dbt --target dev
