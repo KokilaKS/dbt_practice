@@ -5,5 +5,5 @@ sources:
     database: DBT_SFDB
     schema: RAW
     tables:
-      - name: Customers
-      - name: Orders
+      - name: customers
+      - name: orders
