@@ -40,6 +40,11 @@ jobs:
                 schema: ANALYTICS_DEV
                 threads: 4
           EOF
+     
+      - name: Debug env
+        run: |
+          echo "User=$DBT_USER"
+          echo "Account=$DBT_ACCOUNT"
 
       - name: Run dbt build (DEV)
         env:
