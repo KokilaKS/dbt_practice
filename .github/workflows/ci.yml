@@ -22,6 +22,9 @@ jobs:
         run: |
           pip install dbt-snowflake
 
+      - name: Clean dbt
+        run: dbt clean
+
       - name: Debug secrets
         run: |
           echo "DBT_USER=${DBT_USER}"
