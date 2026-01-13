@@ -1,4 +1,5 @@
 {{ config(materialized='table') }}
+-- CI/CD test change from dev
 
 select
     c.CustomerID,

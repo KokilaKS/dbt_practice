@@ -1,3 +1,5 @@
+-- CI/CD test change from dev
+
 {{ config(materialized='table') }}
 
 select
