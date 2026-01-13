@@ -22,9 +22,6 @@ jobs:
         run: |
           pip install dbt-snowflake
 
-      - name: Clean dbt
-        run: dbt clean
-
       - name: Debug secrets
         run: |
           echo "DBT_USER=${DBT_USER}"
@@ -47,18 +44,15 @@ jobs:
                 account: $DBT_ACCOUNT
                 user: $DBT_USER
                 password: $DBT_PASSWORD
-                role:  ACCOUNTADMIN
-
+                role: ACCOUNTADMIN
                 database: DBT_SFDB
                 warehouse: COMPUTE_WH
                 schema: ANALYTICS_DEV
                 threads: 4
           EOF
 
-      - name: Debug env
-        run: |
-          echo "User=$DBT_USER"
-          echo "Account=$DBT_ACCOUNT"
+      - name: Clean dbt
+        run: dbt clean --profiles-dir ~/.dbt
 
       - name: Run dbt build (DEV)
         env:
