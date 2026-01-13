@@ -22,7 +22,17 @@ jobs:
         run: |
           pip install dbt-snowflake
 
+      - name: Debug secrets
+        run: |
+          echo "DBT_USER=${DBT_USER}"
+          echo "DBT_ACCOUNT=${DBT_ACCOUNT}"
+          echo "DBT_PASSWORD is set? ${#DBT_PASSWORD}"
+
       - name: Create dbt profile
+        env:
+          DBT_USER: ${{ secrets.DBT_USER }}
+          DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+          DBT_ACCOUNT: ${{ secrets.DBT_ACCOUNT }}
         run: |
           mkdir -p ~/.dbt
           cat <<EOF > ~/.dbt/profiles.yml
@@ -40,7 +50,7 @@ jobs:
                 schema: ANALYTICS_DEV
                 threads: 4
           EOF
-     
+
       - name: Debug env
         run: |
           echo "User=$DBT_USER"
