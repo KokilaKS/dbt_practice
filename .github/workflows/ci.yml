@@ -44,7 +44,8 @@ jobs:
                 account: $DBT_ACCOUNT
                 user: $DBT_USER
                 password: $DBT_PASSWORD
-                role: SYSADMIN
+                role:  ACCOUNTADMIN
+
                 database: DBT_SFDB
                 warehouse: COMPUTE_WH
                 schema: ANALYTICS_DEV
