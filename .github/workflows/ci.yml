@@ -23,6 +23,10 @@ jobs:
           pip install --upgrade pip
           pip install dbt-snowflake
 
+      - name: Hard reset dbt state
+        run: |
+          rm -rf target dbt_packages logs ~/.dbt
+
       - name: Create dbt profile
         env:
           DBT_USER: ${{ secrets.DBT_USER }}
@@ -46,23 +50,18 @@ jobs:
                 threads: 4
           EOF
 
-      - name: Hard reset dbt state
-        run: |
-          rm -rf target dbt_packages logs
-          dbt clean --profiles-dir ~/.dbt --profile my_new_project || true
-
-      - name: Debug resolved sources
-        run: |
-          dbt ls --resource-type source \
-            --profiles-dir ~/.dbt \
-            --profile my_new_project \
-            --project-dir .
-
-      - name: Install deps
+      - name: Install dbt deps
         run: |
           dbt deps --profiles-dir ~/.dbt --profile my_new_project
 
-      - name: Run dbt build
+      - name: Debug dbt sources
+        run: |
+          dbt ls --resource-type source \
+            --profiles-dir ~/.dbt \
+            --project-dir . \
+            --profile my_new_project
+
+      - name: Run dbt build (DEV)
         run: |
           dbt build \
             --profiles-dir ~/.dbt \
