@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir -p ~/.dbt
           cat <<EOF > ~/.dbt/profiles.yml
-          default:
+          my_new_project:
             target: dev
             outputs:
               dev:
@@ -45,7 +45,7 @@ jobs:
                 user: $DBT_USER
                 password: $DBT_PASSWORD
                 role: ACCOUNTADMIN
-                database: DBT_SFDB
+                database: dbt_sfdb
                 warehouse: COMPUTE_WH
                 schema: ANALYTICS_DEV
                 threads: 4
