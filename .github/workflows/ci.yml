@@ -46,45 +46,23 @@ jobs:
                 threads: 4
           EOF
 
-      - name: Show dbt profile (debug)
+      - name: Hard reset dbt state
         run: |
-          cat ~/.dbt/profiles.yml
-
-      - name: Hard clean dbt state
-        run: |
-          dbt clean --profiles-dir ~/.dbt --profile my_new_project || true
           rm -rf target dbt_packages logs
+          dbt clean --profiles-dir ~/.dbt --profile my_new_project || true
 
-      - name: Debug project files
-        run: |
-          pwd
-          ls
-          find . -name "customer_orders.sql"
-          find . -name "sources.yml"
-
-      - name: Debug dbt sources
+      - name: Debug resolved sources
         run: |
           dbt ls --resource-type source \
             --profiles-dir ~/.dbt \
             --profile my_new_project \
             --project-dir .
 
-      - name: Install dbt deps
+      - name: Install deps
         run: |
-          dbt deps \
-            --profiles-dir ~/.dbt \
-            --profile my_new_project
+          dbt deps --profiles-dir ~/.dbt --profile my_new_project
 
-      - name: Compile dbt (debug compiled SQL)
-        run: |
-          dbt compile \
-            --profiles-dir ~/.dbt \
-            --profile my_new_project \
-            --target dev
-          echo "----- COMPILED customer_orders.sql -----"
-          sed -n '1,200p' target/compiled/**/customer_orders.sql || true
-
-      - name: Run dbt build (DEV)
+      - name: Run dbt build
         run: |
           dbt build \
             --profiles-dir ~/.dbt \
