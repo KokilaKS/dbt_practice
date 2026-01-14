@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: customer_orders
+    description: "Aggregated orders per customer"
+    columns:
+      - name: CustomerID
+        tests:
+          - not_null
+          - unique
