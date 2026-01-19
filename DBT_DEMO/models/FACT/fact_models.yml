@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: FACT_SALES
+    columns:
+      - name: SHIPMENT_ID
+        tests:
+          - unique
+          - not_null
+      - name: CUSTOMER_ID
+        tests:
+          - not_null
+          - relationships:
+              to: ref('DIM_CUSTOMERS')
+              field: CUSTOMER_ID
+      - name: UNIT_PRICE
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+  - name: FACT_CUSTOMER_PURCHASED
+    columns:
+      - name: TOTAL_PURCHASE_AMOUNT
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"

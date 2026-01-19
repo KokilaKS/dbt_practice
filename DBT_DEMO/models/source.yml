@@ -1,0 +1,14 @@
+sources:
+  - name: raw
+    database: TEST_DB
+    schema: DBT_DEMO
+    tables:
+      - name: RAW_CUSTOMERS
+      - name: RAW_PRODUCTS
+      - name: RAW_SUPPLIERS
+      - name: RAW_ORDERS
+      - name: RAW_ORDER_ITEMS
+      - name: RAW_SHIPMENTS
+      - name: RAW_WAREHOUSES
+      - name: RAW_PAYMENTS
+      - name: RAW_RETURNS

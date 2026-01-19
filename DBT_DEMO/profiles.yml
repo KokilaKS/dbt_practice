@@ -1,0 +1,14 @@
+DBT_DEMO:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: MLDMPBY-LA64232
+      user: TESTSNOWFLAKE
+      password: Test@1234567890
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: TEST_DB
+      schema: DBT_DEMO
+    
+    

@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: DIM_CUSTOMERS
+    columns:
+      - name: CUSTOMER_ID
+        tests:
+          - unique
+          - not_null
+      - name: EMAIL
+        tests:
+          - dbt_utils.at_least_one  # Advanced: Ensures the column isn't all NULLs
+
+  - name: DIM_PRODUCTS
+    columns:
+      - name: PRODUCT_ID
+        tests:
+          - unique
+          - not_null
+      - name: CATEGORY
+        tests:
+          - accepted_values:
+              values: ['Footwear', 'Accessories', 'Home', 'Electronics', 'Apparel'] # Example values
+  - name: DIM_ORDER_ITEMS
+    columns:
+      - name: ORDER_ITEM_ID
+        tests:
+          - unique
+          - not_null
+      - name: QUANTITY
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+  - name: DIM_ORDERS
+    columns:
+      - name: ORDER_ID
+        tests:
+          - unique
+          - not_null
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: source('raw', 'RAW_ORDERS')
+  - name: DIM_SHIPMENTS
+    tests:
+      - dbt_utils.mutually_exclusive_ranges:
+          lower_bound_column: SHIPPED_DATE
+          upper_bound_column: DELIVERY_DATE
+  
+  
+  

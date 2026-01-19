@@ -1,0 +1,19 @@
+name: DBT_DEMO
+version: 1.0.0
+config-version: 2
+profile: DBT_DEMO
+model-paths:
+  - models
+analysis-paths:
+  - analyses
+test-paths:
+  - tests
+seed-paths:
+  - seeds
+macro-paths:
+  - macros
+snapshot-paths:
+  - snapshots
+models:
+  DBT_DEMO:
+    +materialized: view
